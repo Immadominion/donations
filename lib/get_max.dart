@@ -1,3 +1,4 @@
+import 'package:donation/flash_screen.dart';
 import 'package:donation/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -27,10 +28,14 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
   void _passInputValue(BuildContext context) {
     setState(() {
       String inputValue = _controller.text;
-      Navigator.pushNamed(
+      Navigator.push(
         context,
-        '/donation',
-        arguments: int.parse(inputValue),
+        MaterialPageRoute(
+          builder: (context) => DonationApp(),
+          settings: RouteSettings(
+            arguments: inputValue,
+          ),
+        ),
       );
     });
   }
@@ -272,6 +277,14 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
           highlightColor: Colors.transparent,
           splashColor: Colors.transparent,
           onTap: voidCallback,
+          onDoubleTap: () => setState(() {
+            String inputValue = _controller.text;
+            Navigator.pushNamed(
+              context,
+              '/donation',
+              arguments: int.parse(inputValue),
+            );
+          }),
           child: Container(
             height: size.width / 8,
             width: size.width / width,

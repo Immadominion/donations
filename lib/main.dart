@@ -167,7 +167,8 @@ class _DonationAppState extends State<DonationApp>
     final path = FullScreenShapePainter()
         .createFullScreenPath(MediaQuery.of(context).size);
 
-    int maxDonation = ModalRoute.of(context)!.settings.arguments as int;
+    String inputValue = ModalRoute.of(context)!.settings.arguments as String;
+    final maxDonation = int.parse(inputValue);
 
     Size size = MediaQuery.of(context).size;
     if (totalDonation >= maxDonation) {
