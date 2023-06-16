@@ -1,4 +1,5 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:donation/get_max.dart';
 import 'package:donation/main.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -45,8 +46,8 @@ class _FlashScreenState extends State<FlashScreen> {
       setState(() {
         Navigator.of(context).pushReplacement(
           ThisIsFadeRoute(
-            page: const DonationApp(),
-            route: const DonationApp(),
+            page: const GetMax(),
+            route: const GetMax(),
           ),
         );
       });
@@ -69,7 +70,7 @@ class _FlashScreenState extends State<FlashScreen> {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.amberAccent,
       body: Center(
         child: Column(
           children: [

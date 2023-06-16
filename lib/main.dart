@@ -22,7 +22,8 @@ void main() {
 }
 
 class DonationApp extends StatefulWidget {
-  const DonationApp({super.key});
+  const DonationApp({super.key, required this.inputValue});
+  final int inputValue;
 
   @override
   _DonationAppState createState() => _DonationAppState();
