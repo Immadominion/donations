@@ -8,7 +8,7 @@ import 'package:rive/rive.dart';
 
 import 'flash_screen.dart';
 
-void main() {
+void main() async {
   runApp(const MaterialApp(
     debugShowCheckedModeBanner: false,
     home: FlashScreen(),
@@ -19,11 +19,20 @@ void main() {
       statusBarIconBrightness: Brightness.light,
     ),
   );
+  onGenerateRoute:
+  (settings) {
+    if (settings.name == '/donation') {
+      return MaterialPageRoute(
+        builder: (context) => DonationApp(),
+        settings: settings,
+      );
+    }
+    return null;
+  };
 }
 
 class DonationApp extends StatefulWidget {
-  const DonationApp({super.key, required this.inputValue});
-  final int inputValue;
+  DonationApp({super.key});
 
   @override
   _DonationAppState createState() => _DonationAppState();
@@ -44,6 +53,7 @@ class _DonationAppState extends State<DonationApp>
   late Animation<double> thirdAnimation;
   late AnimationController fourthController;
   late Animation<double> fourthAnimation;
+  //int maxDonation = int.parse();
 
   @override
   void initState() {
@@ -153,9 +163,12 @@ class _DonationAppState extends State<DonationApp>
 
   @override
   Widget build(BuildContext context) {
+    // String inputValue = ModalRoute.of(context)!.settings.arguments as String;
     final path = FullScreenShapePainter()
         .createFullScreenPath(MediaQuery.of(context).size);
-    const double maxDonation = 3000000;
+
+    int maxDonation = ModalRoute.of(context)!.settings.arguments as int;
+
     Size size = MediaQuery.of(context).size;
     if (totalDonation >= maxDonation) {
       _animationController?.forward(from: 0.0);
@@ -312,6 +325,9 @@ class DonationButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return ElevatedButton(
       onPressed: () => onPressed(amount),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: Color.alphaBlend(Colors.blueGrey, Colors.amberAccent),
+      ),
       child: Text('NGN$amount'),
     );
   }

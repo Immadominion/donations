@@ -6,21 +6,6 @@ import 'dart:ui';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 
-void main() async {
-  runApp(
-    const MaterialApp(
-      home: GetMax(),
-      title: "Animated-Login-Page-UI",
-    ),
-  );
-  SystemChrome.setSystemUIOverlayStyle(
-    const SystemUiOverlayStyle(
-      statusBarColor: Colors.transparent,
-      statusBarIconBrightness: Brightness.light,
-    ),
-  );
-}
-
 class GetMax extends StatefulWidget {
   const GetMax({super.key});
 
@@ -37,16 +22,23 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
   late Animation<double> animation4;
   final TextEditingController _controller = TextEditingController();
 
+  late Fluttertoast fluttertoast;
+
   void _passInputValue(BuildContext context) {
-    String inputValue = _controller.text;
-    DonationApp otherClass = DonationApp(
-      inputValue: 0,
-    );
+    setState(() {
+      String inputValue = _controller.text;
+      Navigator.pushNamed(
+        context,
+        '/donation',
+        arguments: int.parse(inputValue),
+      );
+    });
   }
 
   @override
   void initState() {
     super.initState();
+    fluttertoast = Fluttertoast();
 
     controller1 = AnimationController(
       vsync: this,
@@ -174,7 +166,7 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Expanded(
-                      flex: 2,
+                      flex: 3,
                       child: Padding(
                         padding: EdgeInsets.only(top: size.height * .1),
                         child: Text(
@@ -204,6 +196,9 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
                           HapticFeedback.lightImpact();
                           Fluttertoast.showToast(
                               msg: 'Your Max Donation Value Has Been Set');
+                          setState(() {
+                            _passInputValue(context);
+                          });
                         },
                       ),
                     )
@@ -309,7 +304,7 @@ class MyPainter extends CustomPainter {
               begin: Alignment.topLeft,
               end: Alignment.bottomRight)
           .createShader(Rect.fromCircle(
-        center: Offset(0, 0),
+        center: const Offset(0, 0),
         radius: radius,
       ));
 
