@@ -70,7 +70,7 @@ class _FlashScreenState extends State<FlashScreen> {
     double h = MediaQuery.of(context).size.height;
     double w = MediaQuery.of(context).size.width;
     return Scaffold(
-      backgroundColor: Colors.amberAccent,
+      backgroundColor: Colors.redAccent,
       body: Center(
         child: Column(
           children: [

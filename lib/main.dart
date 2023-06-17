@@ -1,8 +1,63 @@
-import 'dart:async';
+import 'dart:async' show Timer;
 
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter/material.dart'
+    show
+        AlwaysStoppedAnimation,
+        Animation,
+        AnimationController,
+        AnimationStatus,
+        Axis,
+        BoxDecoration,
+        Brightness,
+        BuildContext,
+        Canvas,
+        Center,
+        Color,
+        Colors,
+        Column,
+        Container,
+        CurvedAnimation,
+        Curves,
+        CustomPaint,
+        CustomPainter,
+        ElevatedButton,
+        FontWeight,
+        MainAxisAlignment,
+        MaterialApp,
+        MaterialPageRoute,
+        MediaQuery,
+        ModalRoute,
+        Paint,
+        PaintingStyle,
+        Path,
+        Positioned,
+        Row,
+        Scaffold,
+        SingleTickerProviderStateMixin,
+        Size,
+        SizedBox,
+        Stack,
+        State,
+        StatefulWidget,
+        StatelessWidget,
+        Text,
+        TextStyle,
+        ThemeData,
+        TickerProviderStateMixin,
+        Tween,
+        Widget,
+        runApp;
+//import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter/services.dart'
+    show
+        Brightness,
+        Color,
+        FontWeight,
+        Size,
+        SystemChrome,
+        SystemUiOverlayStyle,
+        rootBundle;
+import 'package:flutter/widgets.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
 import 'package:rive/rive.dart';
 
@@ -19,16 +74,6 @@ void main() async {
       statusBarIconBrightness: Brightness.light,
     ),
   );
-  onGenerateRoute:
-  (settings) {
-    if (settings.name == '/donation') {
-      return MaterialPageRoute(
-        builder: (context) => DonationApp(),
-        settings: settings,
-      );
-    }
-    return null;
-  };
 }
 
 class DonationApp extends StatefulWidget {
@@ -40,7 +85,19 @@ class DonationApp extends StatefulWidget {
 
 class _DonationAppState extends State<DonationApp>
     with TickerProviderStateMixin {
-  double totalDonation = 0.0;
+  void _loadRiveFile() async {
+    final bytes = await rootBundle.load('assets/my_animation.riv');
+    final file = RiveFile.import(bytes);
+    setState(() {
+      _riveArtboard = file.mainArtboard;
+      _riveController = SimpleAnimation('idle');
+    });
+    _riveController = SimpleAnimation('idle');
+  }
+
+  late Artboard _riveArtboard;
+  late RiveAnimationController _riveController;
+  double totalDonation = 0;
   double liquidHeight = 0.0;
   String donationAmount = '0.0%';
   AnimationController? _animationController;
@@ -53,10 +110,12 @@ class _DonationAppState extends State<DonationApp>
   late Animation<double> thirdAnimation;
   late AnimationController fourthController;
   late Animation<double> fourthAnimation;
+
   //int maxDonation = int.parse();
 
   @override
   void initState() {
+    _loadRiveFile();
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 1000),
@@ -152,15 +211,6 @@ class _DonationAppState extends State<DonationApp>
     super.dispose();
   }
 
-  void _donate(double amount) {
-    setState(() {
-      totalDonation += amount;
-      liquidHeight = totalDonation >= 3000000 ? 200 : (totalDonation / 3000000);
-      donationAmount =
-          '${((totalDonation / 3000000) * 100).toStringAsFixed(1)}%';
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     // String inputValue = ModalRoute.of(context)!.settings.arguments as String;
@@ -175,6 +225,16 @@ class _DonationAppState extends State<DonationApp>
       _animationController?.forward(from: 0.0);
     }
 
+    void _donate(double amount) {
+      setState(() {
+        totalDonation += amount;
+        liquidHeight =
+            totalDonation >= maxDonation ? 200 : (totalDonation / 3000000);
+        donationAmount =
+            '${((totalDonation / maxDonation) * 100).toStringAsFixed(1)}%';
+      });
+    }
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Donation App',
@@ -187,26 +247,15 @@ class _DonationAppState extends State<DonationApp>
                 ? Positioned(
                     top: size.height * 0.25,
                     left: size.width * 0.1,
-                    child: const RiveAnimation.asset(
-                        'assets/animations/rocketdemo.riv'),
+                    child:
+                        const RiveAnimation.asset('assets/animations/car.riv'),
                   )
                 : Positioned(
                     top: size.height * 0.25,
                     left: size.width * 0.1,
                     child: const RiveAnimation.asset(
-                        'assets/animations/rocket.riv'),
+                        'assets/animations/bus_anime.riv'),
                   ),
-            LiquidCustomProgressIndicator(
-              value: liquidHeight, // Defaults to 0.5.
-              valueColor: const AlwaysStoppedAnimation(
-                  Colors.pink), // Defaults to the current Theme's accentColor.
-              backgroundColor: Colors
-                  .white, // Defaults to the current Theme's backgroundColor.
-              direction: Axis
-                  .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right).
-              shapePath:
-                  path, // A Path object used to draw the shape of the progress indicator. The size of the progress indicator is created from the bounds of this path.
-            ),
             Positioned.fill(
               child: CustomPaint(
                 painter: MyPainter(
@@ -305,8 +354,6 @@ class MyPainter extends CustomPainter {
           size.height / thirdValue, size.width, size.height / fourthValue)
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height);
-
-    canvas.drawPath(path, paint);
   }
 
   @override

@@ -274,8 +274,8 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaY: 15, sigmaX: 15),
         child: InkWell(
-          highlightColor: Colors.transparent,
-          splashColor: Colors.transparent,
+          highlightColor: Colors.black87,
+          splashColor: Colors.black87,
           onTap: voidCallback,
           onDoubleTap: () => setState(() {
             String inputValue = _controller.text;
@@ -286,7 +286,7 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
             );
           }),
           child: Container(
-            height: size.width / 8,
+            height: size.height / 8,
             width: size.width / width,
             alignment: Alignment.center,
             decoration: BoxDecoration(
