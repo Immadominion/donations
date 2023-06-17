@@ -2,6 +2,7 @@ import 'package:donation/flash_screen.dart';
 import 'package:donation/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'dart:async';
 import 'dart:ui';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -178,7 +179,7 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
                           'CHARITY CHURCH',
                           style: TextStyle(
                             color: Colors.black.withOpacity(.9),
-                            fontSize: 60,
+                            fontSize: 60.sp,
                             fontWeight: FontWeight.bold,
                             letterSpacing: 1,
                             wordSpacing: 4,
@@ -196,14 +197,16 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
                     Expanded(
                       child: component2(
                         'Enter',
-                        2.58,
+                        2.58.sp,
                         () {
                           HapticFeedback.lightImpact();
                           Fluttertoast.showToast(
                               msg: 'Your Max Donation Value Has Been Set');
-                          setState(() {
+                          try {
                             _passInputValue(context);
-                          });
+                          } catch (e) {
+                            print(e);
+                          }
                         },
                       ),
                     )
@@ -238,13 +241,13 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
           ),
           child: TextField(
             controller: _controller,
-            cursorHeight: 40,
+            cursorHeight: 30.sp,
             inputFormatters: <TextInputFormatter>[
               FilteringTextInputFormatter.allow(RegExp(r'^[0-9]*$')),
             ],
             style: TextStyle(
               color: Colors.black.withOpacity(.8),
-              fontSize: 50,
+              fontSize: 40.sp,
             ),
             cursorColor: Colors.black,
             obscureText: isPassword,
@@ -252,14 +255,14 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
             decoration: InputDecoration(
               prefixIcon: Icon(
                 icon,
-                color: Colors.black.withOpacity(.7),
-                size: 54.0,
+                color: Colors.black.withOpacity(.8),
+                size: 40.sp,
               ),
               border: InputBorder.none,
               hintMaxLines: 1,
               hintText: hintText,
-              hintStyle:
-                  TextStyle(fontSize: 54, color: Colors.black.withOpacity(.5)),
+              hintStyle: TextStyle(
+                  fontSize: 40.sp, color: Colors.black.withOpacity(.5)),
             ),
           ),
         ),
@@ -274,8 +277,8 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaY: 15, sigmaX: 15),
         child: InkWell(
-          highlightColor: Colors.black87,
-          splashColor: Colors.black87,
+          highlightColor: Colors.transparent,
+          splashColor: Colors.black12,
           onTap: voidCallback,
           onDoubleTap: () => setState(() {
             String inputValue = _controller.text;

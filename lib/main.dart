@@ -1,5 +1,6 @@
 import 'dart:async' show Timer;
 import 'package:lottie/lottie.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart'
@@ -66,10 +67,15 @@ import 'package:rive/rive.dart';
 import 'flash_screen.dart';
 
 void main() async {
-  runApp(const MaterialApp(
-    debugShowCheckedModeBanner: false,
-    home: FlashScreen(),
-  ));
+  runApp(ScreenUtilInit(
+      designSize: const Size(1600, 900),
+      splitScreenMode: true,
+      builder: (context, child) {
+        return const MaterialApp(
+          debugShowCheckedModeBanner: false,
+          home: FlashScreen(),
+        );
+      }));
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -87,15 +93,6 @@ class DonationApp extends StatefulWidget {
 
 class _DonationAppState extends State<DonationApp>
     with TickerProviderStateMixin {
-  void _loadRiveFile() async {
-    final bytes = await rootBundle.load('assets/car.riv');
-    final file = RiveFile.import(bytes);
-    setState(() {
-      _riveArtboard = file.mainArtboard;
-      _riveController = SimpleAnimation('idle');
-    });
-  }
-
   late Artboard _riveArtboard;
   late RiveAnimationController _riveController;
   double totalDonation = 0;
@@ -111,13 +108,10 @@ class _DonationAppState extends State<DonationApp>
   late Animation<double> thirdAnimation;
   late AnimationController fourthController;
   late Animation<double> fourthAnimation;
-  late final AnimationController _ontroller;
-
-  //int maxDonation = int.parse();
+  late final AnimationController _controller;
 
   @override
   void initState() {
-    _loadRiveFile();
     super.initState();
     _animationController = AnimationController(
       duration: const Duration(seconds: 1000),
@@ -190,6 +184,9 @@ class _DonationAppState extends State<DonationApp>
           fourthController.forward();
         }
       });
+    Timer(const Duration(seconds: 2), () {
+      firstController.forward();
+    });
     Timer(const Duration(milliseconds: 1600), () {
       secondController.forward();
     });
@@ -200,22 +197,6 @@ class _DonationAppState extends State<DonationApp>
 
     fourthController.forward();
   }
-
-  // void _loadRiveFile() async {
-  //   // Load the Rive file
-  //   final bytes = await rootBundle.load('assets/car.riv');
-  //   final bytes = await rootBundle.load('assets/bus_anime.riv');
-  //   final file = RiveFile();
-  //   if (file.import(bytes)) {
-  //     // Extract the animation by its name
-  //     final animation = file.mainArtboard.animationByName('car');
-  //     if (animation != null) {
-  //       // Create a RiveAnimationController
-  //       _riveController = SimpleAnimation(animation: animation);
-  //       setState(() {});
-  //     }
-  //   }
-  // }
 
   @override
   void dispose() {
@@ -247,7 +228,7 @@ class _DonationAppState extends State<DonationApp>
       setState(() {
         totalDonation += amount;
         liquidHeight =
-            totalDonation >= maxDonation ? 200 : (totalDonation / 3000000);
+            totalDonation >= maxDonation ? 200 : (totalDonation / maxDonation);
         donationAmount =
             '${((totalDonation / maxDonation) * 100).toStringAsFixed(1)}%';
       });
@@ -261,32 +242,33 @@ class _DonationAppState extends State<DonationApp>
         backgroundColor: const Color.fromARGB(255, 51, 126, 103),
         body: Stack(
           children: [
-            if (totalDonation < maxDonation)
-              Positioned(
-                top: size.height * 0.25,
-                left: size.width * 0.1,
-                child: Lottie.asset("assets/lottie_bus.json",
-                    controller: _busScaleAnimation, onLoaded: (composition) {}),
-              )
-            else
-              Positioned(
-                top: size.height * 0.25,
-                left: size.width * 0.1,
-                child: Lottie.asset(
-                  "assets/lottie_bus.json",
-                  controller: _busScaleAnimation,
-                  onLoaded: (composition) {},
-                ),
-              ),
-            Positioned.fill(
-              child: CustomPaint(
-                painter: MyPainter(
-                  firstAnimation.value,
-                  secondAnimation.value,
-                  thirdAnimation.value,
-                  fourthAnimation.value,
-                ),
-              ),
+            // if (totalDonation < maxDonation)
+            //   Positioned(
+            //     top: size.height * 0.25,
+            //     left: size.width * 0.1,
+            //     child: Lottie.asset("assets/lottie_bus.json",
+            //         controller: _busScaleAnimation, onLoaded: (composition) {}),
+            //   )
+            // else
+            //   Positioned(
+            //     top: size.height * 0.25,
+            //     left: size.width * 0.1,
+            //     child: Lottie.asset(
+            //       "assets/lottie_bus.json",
+            //       controller: _busScaleAnimation,
+            //       onLoaded: (composition) {},
+            //     ),
+            //   ),
+            LiquidCustomProgressIndicator(
+              value: liquidHeight, // Defaults to 0.5.
+              valueColor: const AlwaysStoppedAnimation(
+                  Colors.pink), // Defaults to the current Theme's accentColor.
+              backgroundColor: const Color.fromARGB(255, 71, 113,
+                  133), // Defaults to the current Theme's backgroundColor.
+              direction: Axis
+                  .vertical, // The direction the liquid moves (Axis.vertical = bottom to top, Axis.horizontal = left to right).
+              shapePath:
+                  path, // A Path object used to draw the shape of the progress indicator. The size of the progress indicator is created from the bounds of this path.
             ),
             Positioned.fill(
               child: Center(
@@ -294,10 +276,10 @@ class _DonationAppState extends State<DonationApp>
                   donationAmount,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
-                    wordSpacing: 3,
+                    wordSpacing: 3.sp,
                     color: Colors.white.withOpacity(.5),
                   ),
-                  textScaleFactor: 9,
+                  textScaleFactor: 9.sp,
                 ),
               ),
             ),
@@ -309,35 +291,56 @@ class _DonationAppState extends State<DonationApp>
                 children: [
                   Text(
                     'Total Donation: NGN${totalDonation.toStringAsFixed(2)}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       fontWeight: FontWeight.bold,
-                      fontSize: 20,
+                      fontSize: 20.sp,
                       color: Colors.white,
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DonationButton(amount: 1000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 2000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 5000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 10000, onPressed: _donate),
                     ],
                   ),
-                  const SizedBox(height: 10),
+                  SizedBox(
+                    height: 30.h,
+                    width: 20.w,
+                  ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       DonationButton(amount: 20000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 50000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 100000, onPressed: _donate),
-                      const SizedBox(width: 10),
+                      SizedBox(
+                        width: 20.w,
+                        height: 20.h,
+                      ),
                       DonationButton(amount: 200000, onPressed: _donate),
                     ],
                   ),
@@ -367,7 +370,7 @@ class MyPainter extends CustomPainter {
   @override
   void paint(Canvas canvas, Size size) {
     var paint = Paint()
-      ..color = const Color.fromARGB(255, 70, 114, 190).withOpacity(.4)
+      ..color = const Color.fromARGB(255, 162, 70, 190).withOpacity(.4)
       ..style = PaintingStyle.fill;
 
     var path = Path()
@@ -376,6 +379,8 @@ class MyPainter extends CustomPainter {
           size.height / thirdValue, size.width, size.height / fourthValue)
       ..lineTo(size.width, size.height)
       ..lineTo(0, size.height);
+
+    canvas.drawPath(path, paint);
   }
 
   @override
@@ -396,68 +401,16 @@ class DonationButton extends StatelessWidget {
     return ElevatedButton(
       onPressed: () => onPressed(amount),
       style: ElevatedButton.styleFrom(
-        backgroundColor: Color.alphaBlend(Colors.blueGrey, Colors.amberAccent),
+        backgroundColor: Colors.orange[300],
       ),
-      child: Text('NGN$amount'),
-    );
-  }
-}
-
-class LiquidDonationAnimation extends StatefulWidget {
-  final double donationPercentage;
-
-  LiquidDonationAnimation({required this.donationPercentage});
-
-  @override
-  _LiquidDonationAnimationState createState() =>
-      _LiquidDonationAnimationState();
-}
-
-class _LiquidDonationAnimationState extends State<LiquidDonationAnimation>
-    with SingleTickerProviderStateMixin {
-  late AnimationController _controller;
-  late Animation<double> _waveAnimation;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 10),
-    )..value = widget.donationPercentage / 100;
-
-    _waveAnimation = Tween(begin: 0.0, end: 1.0).animate(_controller);
-  }
-
-  @override
-  void didUpdateWidget(covariant LiquidDonationAnimation oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    _controller.value = widget.donationPercentage / 100;
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: SizedBox(
-        width: 200.0,
-        height: 200.0,
-        child: LiquidCircularProgressIndicator(
-          value: _waveAnimation.value,
-          valueColor: const AlwaysStoppedAnimation(Colors.blue),
-          backgroundColor: Colors.white,
-          borderColor: Colors.blue,
-          borderWidth: 5.0,
-          direction: Axis.vertical,
-          center: Text(
-            "${widget.donationPercentage.toStringAsFixed(0)}%",
-            style: const TextStyle(fontSize: 20.0, color: Colors.black),
-          ),
+      child: Text(
+        'NGN$amount',
+        style: TextStyle(
+          letterSpacing: 4.sp,
+          height: 2.h,
+          color: Colors.black,
+          fontSize: 25.sp,
+          fontWeight: FontWeight.bold,
         ),
       ),
     );
