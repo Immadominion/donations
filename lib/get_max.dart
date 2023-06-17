@@ -1,4 +1,3 @@
-import 'package:donation/flash_screen.dart';
 import 'package:donation/main.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -25,6 +24,22 @@ class _GetMaxState extends State<GetMax> with TickerProviderStateMixin {
   final TextEditingController _controller = TextEditingController();
 
   late Fluttertoast fluttertoast;
+
+  String _formattedNumber = '';
+
+  void _formatNumber(int donationAmount) {
+    // Create a NumberFormat object with the desired locale and options
+    final NumberFormat formatter =
+        NumberFormat.currency(locale: 'en_US', decimalDigits: 2);
+
+    // Parse the text input as a double and format it using the formatter
+    final String formattedNumber = formatter.format(donationAmount);
+
+    // Update the state with the formatted number
+    setState(() {
+      _formattedNumber = formattedNumber;
+    });
+  }
 
   void _passInputValue(BuildContext context) {
     setState(() {

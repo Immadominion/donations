@@ -1,8 +1,6 @@
 import 'dart:async' show Timer;
-import 'package:lottie/lottie.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart'
     show
         AlwaysStoppedAnimation,
@@ -10,7 +8,6 @@ import 'package:flutter/material.dart'
         AnimationController,
         AnimationStatus,
         Axis,
-        BoxDecoration,
         Brightness,
         BuildContext,
         Canvas,
@@ -18,16 +15,13 @@ import 'package:flutter/material.dart'
         Color,
         Colors,
         Column,
-        Container,
         CurvedAnimation,
         Curves,
-        CustomPaint,
         CustomPainter,
         ElevatedButton,
         FontWeight,
         MainAxisAlignment,
         MaterialApp,
-        MaterialPageRoute,
         MediaQuery,
         ModalRoute,
         Paint,
@@ -36,7 +30,6 @@ import 'package:flutter/material.dart'
         Positioned,
         Row,
         Scaffold,
-        SingleTickerProviderStateMixin,
         Size,
         SizedBox,
         Stack,
@@ -58,11 +51,9 @@ import 'package:flutter/services.dart'
         FontWeight,
         Size,
         SystemChrome,
-        SystemUiOverlayStyle,
-        rootBundle;
+        SystemUiOverlayStyle;
 import 'package:flutter/widgets.dart';
 import 'package:liquid_progress_indicator_v2/liquid_progress_indicator.dart';
-import 'package:rive/rive.dart';
 
 import 'flash_screen.dart';
 
@@ -76,6 +67,7 @@ void main() async {
           home: FlashScreen(),
         );
       }));
+  WidgetsFlutterBinding.ensureInitialized();
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
@@ -85,7 +77,7 @@ void main() async {
 }
 
 class DonationApp extends StatefulWidget {
-  DonationApp({super.key});
+  const DonationApp({super.key});
 
   @override
   _DonationAppState createState() => _DonationAppState();
@@ -93,13 +85,10 @@ class DonationApp extends StatefulWidget {
 
 class _DonationAppState extends State<DonationApp>
     with TickerProviderStateMixin {
-  late Artboard _riveArtboard;
-  late RiveAnimationController _riveController;
   double totalDonation = 0;
   double liquidHeight = 0.0;
   String donationAmount = '0.0%';
   AnimationController? _animationController;
-  late Animation<double> _busScaleAnimation;
   late AnimationController firstController;
   late Animation<double> firstAnimation;
   late AnimationController secondController;
@@ -108,7 +97,6 @@ class _DonationAppState extends State<DonationApp>
   late Animation<double> thirdAnimation;
   late AnimationController fourthController;
   late Animation<double> fourthAnimation;
-  late final AnimationController _controller;
 
   @override
   void initState() {
@@ -116,13 +104,6 @@ class _DonationAppState extends State<DonationApp>
     _animationController = AnimationController(
       duration: const Duration(seconds: 1000),
       vsync: this,
-    );
-
-    _busScaleAnimation = Tween<double>(begin: 1.0, end: 0.0).animate(
-      CurvedAnimation(
-        parent: _animationController!,
-        curve: Curves.easeInOut,
-      ),
     );
 
     firstController = AnimationController(
@@ -212,7 +193,6 @@ class _DonationAppState extends State<DonationApp>
 
   @override
   Widget build(BuildContext context) {
-    // String inputValue = ModalRoute.of(context)!.settings.arguments as String;
     final path = FullScreenShapePainter()
         .createFullScreenPath(MediaQuery.of(context).size);
 
@@ -224,7 +204,7 @@ class _DonationAppState extends State<DonationApp>
       _animationController?.forward(from: 0.0);
     }
 
-    void _donate(double amount) {
+    void donate(double amount) {
       setState(() {
         totalDonation += amount;
         liquidHeight =
@@ -284,22 +264,22 @@ class _DonationAppState extends State<DonationApp>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      DonationButton(amount: 1000, onPressed: _donate),
+                      DonationButton(amount: 1000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 2000, onPressed: _donate),
+                      DonationButton(amount: 2000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 5000, onPressed: _donate),
+                      DonationButton(amount: 5000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 10000, onPressed: _donate),
+                      DonationButton(amount: 10000, onPressed: donate),
                     ],
                   ),
                   SizedBox(
@@ -309,22 +289,22 @@ class _DonationAppState extends State<DonationApp>
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      DonationButton(amount: 20000, onPressed: _donate),
+                      DonationButton(amount: 20000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 50000, onPressed: _donate),
+                      DonationButton(amount: 50000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 100000, onPressed: _donate),
+                      DonationButton(amount: 100000, onPressed: donate),
                       SizedBox(
                         width: 20.w,
                         height: 20.h,
                       ),
-                      DonationButton(amount: 200000, onPressed: _donate),
+                      DonationButton(amount: 200000, onPressed: donate),
                     ],
                   ),
                 ],
