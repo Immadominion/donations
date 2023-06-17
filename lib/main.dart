@@ -242,23 +242,6 @@ class _DonationAppState extends State<DonationApp>
         backgroundColor: const Color.fromARGB(255, 51, 126, 103),
         body: Stack(
           children: [
-            // if (totalDonation < maxDonation)
-            //   Positioned(
-            //     top: size.height * 0.25,
-            //     left: size.width * 0.1,
-            //     child: Lottie.asset("assets/lottie_bus.json",
-            //         controller: _busScaleAnimation, onLoaded: (composition) {}),
-            //   )
-            // else
-            //   Positioned(
-            //     top: size.height * 0.25,
-            //     left: size.width * 0.1,
-            //     child: Lottie.asset(
-            //       "assets/lottie_bus.json",
-            //       controller: _busScaleAnimation,
-            //       onLoaded: (composition) {},
-            //     ),
-            //   ),
             LiquidCustomProgressIndicator(
               value: liquidHeight, // Defaults to 0.5.
               valueColor: const AlwaysStoppedAnimation(
@@ -272,14 +255,22 @@ class _DonationAppState extends State<DonationApp>
             ),
             Positioned.fill(
               child: Center(
-                child: Text(
-                  donationAmount,
-                  style: TextStyle(
-                    fontWeight: FontWeight.w600,
-                    wordSpacing: 3.sp,
-                    color: Colors.white.withOpacity(.5),
-                  ),
-                  textScaleFactor: 9.sp,
+                child: Column(
+                  children: [
+                    Text(
+                      donationAmount,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        wordSpacing: 3.sp,
+                        color: Colors.white,
+                      ),
+                      textScaleFactor: 25.sp,
+                    ),
+                    SizedBox(
+                      width: 20.w,
+                      height: 20.h,
+                    ),
+                  ],
                 ),
               ),
             ),
@@ -289,14 +280,6 @@ class _DonationAppState extends State<DonationApp>
               right: 0,
               child: Column(
                 children: [
-                  Text(
-                    'Total Donation: NGN${totalDonation.toStringAsFixed(2)}',
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                      fontSize: 20.sp,
-                      color: Colors.white,
-                    ),
-                  ),
                   SizedBox(height: 20.h),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -407,9 +390,9 @@ class DonationButton extends StatelessWidget {
         'NGN$amount',
         style: TextStyle(
           letterSpacing: 4.sp,
-          height: 2.h,
+          height: 2.5.h,
           color: Colors.black,
-          fontSize: 25.sp,
+          fontSize: 29.sp,
           fontWeight: FontWeight.bold,
         ),
       ),
