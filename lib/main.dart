@@ -1,5 +1,7 @@
 import 'dart:async' show Timer;
+import 'package:lottie/lottie.dart';
 
+import 'package:flare_flutter/flare_actor.dart';
 import 'package:flutter/material.dart'
     show
         AlwaysStoppedAnimation,
@@ -86,13 +88,12 @@ class DonationApp extends StatefulWidget {
 class _DonationAppState extends State<DonationApp>
     with TickerProviderStateMixin {
   void _loadRiveFile() async {
-    final bytes = await rootBundle.load('assets/my_animation.riv');
+    final bytes = await rootBundle.load('assets/car.riv');
     final file = RiveFile.import(bytes);
     setState(() {
       _riveArtboard = file.mainArtboard;
       _riveController = SimpleAnimation('idle');
     });
-    _riveController = SimpleAnimation('idle');
   }
 
   late Artboard _riveArtboard;
@@ -110,6 +111,7 @@ class _DonationAppState extends State<DonationApp>
   late Animation<double> thirdAnimation;
   late AnimationController fourthController;
   late Animation<double> fourthAnimation;
+  late final AnimationController _ontroller;
 
   //int maxDonation = int.parse();
 
@@ -199,6 +201,22 @@ class _DonationAppState extends State<DonationApp>
     fourthController.forward();
   }
 
+  // void _loadRiveFile() async {
+  //   // Load the Rive file
+  //   final bytes = await rootBundle.load('assets/car.riv');
+  //   final bytes = await rootBundle.load('assets/bus_anime.riv');
+  //   final file = RiveFile();
+  //   if (file.import(bytes)) {
+  //     // Extract the animation by its name
+  //     final animation = file.mainArtboard.animationByName('car');
+  //     if (animation != null) {
+  //       // Create a RiveAnimationController
+  //       _riveController = SimpleAnimation(animation: animation);
+  //       setState(() {});
+  //     }
+  //   }
+  // }
+
   @override
   void dispose() {
     _animationController?.dispose();
@@ -243,19 +261,23 @@ class _DonationAppState extends State<DonationApp>
         backgroundColor: const Color.fromARGB(255, 51, 126, 103),
         body: Stack(
           children: [
-            totalDonation < maxDonation
-                ? Positioned(
-                    top: size.height * 0.25,
-                    left: size.width * 0.1,
-                    child:
-                        const RiveAnimation.asset('assets/animations/car.riv'),
-                  )
-                : Positioned(
-                    top: size.height * 0.25,
-                    left: size.width * 0.1,
-                    child: const RiveAnimation.asset(
-                        'assets/animations/bus_anime.riv'),
-                  ),
+            if (totalDonation < maxDonation)
+              Positioned(
+                top: size.height * 0.25,
+                left: size.width * 0.1,
+                child: Lottie.asset("assets/lottie_bus.json",
+                    controller: _busScaleAnimation, onLoaded: (composition) {}),
+              )
+            else
+              Positioned(
+                top: size.height * 0.25,
+                left: size.width * 0.1,
+                child: Lottie.asset(
+                  "assets/lottie_bus.json",
+                  controller: _busScaleAnimation,
+                  onLoaded: (composition) {},
+                ),
+              ),
             Positioned.fill(
               child: CustomPaint(
                 painter: MyPainter(
